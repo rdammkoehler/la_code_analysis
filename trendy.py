@@ -66,7 +66,7 @@ def slope_of(raw_data):
 
 epsilon = 0.000000001  # todo how the hell do you know if that is a good value?
 
-def slope_word(slope):
+def slope_trend(slope):
 	if slope == float('inf'):
 		return 'ukn'
 	if slope > epsilon:
@@ -100,7 +100,7 @@ def add_calculated_trend_data(report):
 	def add_slope(trend_block, name, left, right):
 		slope = slope_of(combine_raw_data(left, right))
 		trend_block['{}_val'.format(name)] = slope
-		trend_block[name] = slope_word(slope)
+		trend_block[name] = slope_trend(slope)
 
 	for measure, data in report.items():
 		if len(data['raw']) > 1:
@@ -307,19 +307,19 @@ def test_combine_raw_data_requires_second_arg():
 	with pytest.raises(AttributeError):
 		combine_raw_data(first,second)
 
-def test_slope_word_sez_pos_when_input_gt_zero():
-	assert slope_word(epsilon*10) == 'pos'
+def test_slope_trend_sez_pos_when_input_gt_zero():
+	assert slope_trend(epsilon*10) == 'pos'
 
 
-def test_slope_word_sez_neg_when_input_lt_zero():
-	assert slope_word(-epsilon*10) == 'neg'
+def test_slope_trend_sez_neg_when_input_lt_zero():
+	assert slope_trend(-epsilon*10) == 'neg'
 
 
-def test_slope_word_sez_sbl_when_input_near_zero():
-	assert slope_word(epsilon/10) == 'sbl'
-	assert slope_word(0) == 'sbl'
-	assert slope_word(-epsilon/10) == 'sbl'
+def test_slope_trend_sez_sbl_when_input_near_zero():
+	assert slope_trend(epsilon/10) == 'sbl'
+	assert slope_trend(0) == 'sbl'
+	assert slope_trend(-epsilon/10) == 'sbl'
 
 
-def test_slop_word_sez_ukn_when_input_is_inf():
-	assert slope_word(float('inf')) == 'ukn'
+def test_slope_trend_sez_ukn_when_input_is_inf():
+	assert slope_trend(float('inf')) == 'ukn'
