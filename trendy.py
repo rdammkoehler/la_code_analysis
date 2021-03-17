@@ -91,15 +91,8 @@ def collect_raw_data_and_interstitial_slopes(input):
 			out[measure]['interstitial'].append(slope_of(out[measure]['raw'][-1]))
 	return out
 
-def do_trend_analysis(input):
-	out = collect_raw_data_and_interstitial_slopes(input)
-	# out = defaultdict(measure_struct)
-	# for measure, measurments in json.loads(input).items():
-	# 	measures = sorted(measurments, key=lambda m: m['datetime'])
-	# 	measure_pairs = list(zip(measures, (*measures[1:],*[None])))[:-1]
-	# 	for pair in measure_pairs:
-	# 		out[measure]['raw'].append(make_raw_data(pair))
-	# 		out[measure]['interstitial'].append(slope_of(out[measure]['raw'][-1]))
+
+def calculate_trend_data(out):
 	for measure, data in out.items():
 		if len(data['raw']) > 1:
 			first = data['raw'][0]
@@ -112,6 +105,29 @@ def do_trend_analysis(input):
 			data['trend']['middle'] = slope_word(data['trend']['middle_val'])
 			data['trend']['short_val'] = slope_of(combine_raw_data(penultimate, last))
 			data['trend']['short'] = slope_word(data['trend']['short_val'])
+
+def do_trend_analysis(input):
+	out = collect_raw_data_and_interstitial_slopes(input)
+	# out = defaultdict(measure_struct)
+	# for measure, measurments in json.loads(input).items():
+	# 	measures = sorted(measurments, key=lambda m: m['datetime'])
+	# 	measure_pairs = list(zip(measures, (*measures[1:],*[None])))[:-1]
+	# 	for pair in measure_pairs:
+	# 		out[measure]['raw'].append(make_raw_data(pair))
+	# 		out[measure]['interstitial'].append(slope_of(out[measure]['raw'][-1]))
+	calculate_trend_data(out)
+	# for measure, data in out.items():
+	# 	if len(data['raw']) > 1:
+	# 		first = data['raw'][0]
+	# 		last = data['raw'][-1]
+	# 		middle_data = data['raw'][int(len(data['raw'])/2)]
+	# 		penultimate = data['raw'][-2]
+	# 		data['trend']['long_val'] = slope_of(combine_raw_data(first, last))
+	# 		data['trend']['long'] = slope_word(data['trend']['long_val'])
+	# 		data['trend']['middle_val'] = slope_of(combine_raw_data(middle_data, last))
+	# 		data['trend']['middle'] = slope_word(data['trend']['middle_val'])
+	# 		data['trend']['short_val'] = slope_of(combine_raw_data(penultimate, last))
+	# 		data['trend']['short'] = slope_word(data['trend']['short_val'])
 	return out
 
 
