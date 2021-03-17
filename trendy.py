@@ -95,13 +95,13 @@ def collect_raw_data_and_interstitial_slopes(input):
 	return out
 
 
-def calculate_trend_data(out):
+def calculate_trend_data(report):
 	def add_slope(trend_block, name, left, right):
 		slope = slope_of(combine_raw_data(left, right))
 		trend_block['{}_val'.format(name)] = slope
 		trend_block[name] = slope_word(slope)
 
-	for measure, data in out.items():
+	for measure, data in report.items():
 		if len(data['raw']) > 1:
 			first = data['raw'][0]
 			last = data['raw'][-1]
@@ -113,9 +113,9 @@ def calculate_trend_data(out):
 
 
 def do_trend_analysis(input):
-	out = collect_raw_data_and_interstitial_slopes(input)
-	calculate_trend_data(out)
-	return out
+	report = collect_raw_data_and_interstitial_slopes(input)
+	calculate_trend_data(report)
+	return report
 
 
 if __name__ == '__main__':
