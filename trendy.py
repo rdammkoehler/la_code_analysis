@@ -90,8 +90,9 @@ def collect_raw_data_and_interstitial_slopes(input):
 	for measure, measurments in json.loads(input).items():
 		measure_pairs = create_adjacent_pairs(measurments)
 		for pair in measure_pairs:
-			report[measure]['raw'].append(make_raw_data(pair))
-			report[measure]['interstitial'].append(slope_of(report[measure]['raw'][-1]))
+			raw_data = make_raw_data(pair)
+			report[measure]['raw'].append(raw_data)
+			report[measure]['interstitial'].append(slope_of(raw_data))
 	return report
 
 
