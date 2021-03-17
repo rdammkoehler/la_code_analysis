@@ -80,7 +80,8 @@ def slope_word(slope):
 def combine_raw_data(first, second):
 	return RawSlopeData(first.y1,second.y1,first.x1,second.x1)
 
-def do_trend_analysis(input):
+
+def collect_raw_data_and_interstitial_slopes(input):
 	out = defaultdict(measure_struct)
 	for measure, measurments in json.loads(input).items():
 		measures = sorted(measurments, key=lambda m: m['datetime'])
@@ -88,6 +89,17 @@ def do_trend_analysis(input):
 		for pair in measure_pairs:
 			out[measure]['raw'].append(make_raw_data(pair))
 			out[measure]['interstitial'].append(slope_of(out[measure]['raw'][-1]))
+	return out
+
+def do_trend_analysis(input):
+	out = collect_raw_data_and_interstitial_slopes(input)
+	# out = defaultdict(measure_struct)
+	# for measure, measurments in json.loads(input).items():
+	# 	measures = sorted(measurments, key=lambda m: m['datetime'])
+	# 	measure_pairs = list(zip(measures, (*measures[1:],*[None])))[:-1]
+	# 	for pair in measure_pairs:
+	# 		out[measure]['raw'].append(make_raw_data(pair))
+	# 		out[measure]['interstitial'].append(slope_of(out[measure]['raw'][-1]))
 	for measure, data in out.items():
 		if len(data['raw']) > 1:
 			first = data['raw'][0]
