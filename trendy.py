@@ -42,9 +42,9 @@ def measure_struct():
 		'raw': list(),
 		'interstitial': list(),
 		'trend': {
-			'long': None, 'long_val': 0,
-			'middle': None, 'middle_val': 0,
-			'short': None, 'short_val': 0,
+			'long': 'ukn', 'long_val': 0,
+			'middle': 'ukn', 'middle_val': 0,
+			'short': 'ukn', 'short_val': 0,
 		}
 	}
 
@@ -188,9 +188,9 @@ def test_measure_struct_default_values():
 		'raw': list(),
 		'interstitial': list(),
 		'trend': {
-			'long': None, 'long_val': 0,
-			'middle': None, 'middle_val': 0,
-			'short': None, 'short_val': 0,
+			'long': 'ukn', 'long_val': 0,
+			'middle': 'ukn', 'middle_val': 0,
+			'short': 'ukn', 'short_val': 0,
 		}
 	}
 
