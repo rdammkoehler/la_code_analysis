@@ -95,7 +95,7 @@ def collect_raw_data_and_interstitial_slopes(input):
 	return out
 
 
-def calculate_trend_data(report):
+def add_calculated_trend_data(report):
 	def add_slope(trend_block, name, left, right):
 		slope = slope_of(combine_raw_data(left, right))
 		trend_block['{}_val'.format(name)] = slope
@@ -114,7 +114,7 @@ def calculate_trend_data(report):
 
 def do_trend_analysis(input):
 	report = collect_raw_data_and_interstitial_slopes(input)
-	calculate_trend_data(report)
+	add_calculated_trend_data(report)
 	return report
 
 
