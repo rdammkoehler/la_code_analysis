@@ -42,9 +42,9 @@ def measure_struct():
 		'raw': list(),
 		'interstitial': list(),
 		'trend': {
-			'long': 'ukn', 'long_val': 0,
-			'middle': 'ukn', 'middle_val': 0,
-			'short': 'ukn', 'short_val': 0,
+			'long': 'unknown', 'long_val': 0,
+			'middle': 'unknown', 'middle_val': 0,
+			'short': 'unknown', 'short_val': 0,
 		}
 	}
 
@@ -68,13 +68,13 @@ def slope_of(raw_data):
 
 def slope_trend(slope, epsilon=0.000000001):
 	if slope == float('inf'):
-		return 'ukn'
+		return 'unknown'
 	if slope > epsilon:
-		return 'pos'
+		return 'positive'
 	if slope < (0-epsilon):
-		return 'neg'
+		return 'negative'
 	if (0-epsilon) < slope < (0+epsilon):
-		return 'sbl'
+		return 'stable'
 
 
 def epsilon_for(raw_data):
@@ -195,9 +195,9 @@ def test_do_trend_analysis_reports_pos_neg_or_sbl():
 	)
 	out = do_trend_analysis(test_data)
 
-	assert out['method_lines']['trend']['long'] == 'pos'
-	assert out['method_lines']['trend']['middle'] == 'pos'
-	assert out['method_lines']['trend']['short'] == 'pos'
+	assert out['method_lines']['trend']['long'] == 'positive'
+	assert out['method_lines']['trend']['middle'] == 'positive'
+	assert out['method_lines']['trend']['short'] == 'positive'
 
 
 def test_measure_struct_default_values():
@@ -205,9 +205,9 @@ def test_measure_struct_default_values():
 		'raw': list(),
 		'interstitial': list(),
 		'trend': {
-			'long': 'ukn', 'long_val': 0,
-			'middle': 'ukn', 'middle_val': 0,
-			'short': 'ukn', 'short_val': 0,
+			'long': 'unknown', 'long_val': 0,
+			'middle': 'unknown', 'middle_val': 0,
+			'short': 'unknown', 'short_val': 0,
 		}
 	}
 
@@ -319,21 +319,21 @@ def test_combine_raw_data_requires_second_arg():
 
 def test_slope_trend_sez_pos_when_input_gt_zero():
 	epsilon = 0.000000001
-	assert slope_trend(epsilon*10, epsilon) == 'pos'
+	assert slope_trend(epsilon*10, epsilon) == 'positive'
 
 
 def test_slope_trend_sez_neg_when_input_lt_zero():
 	epsilon = 0.000000001
-	assert slope_trend(-epsilon*10, epsilon) == 'neg'
+	assert slope_trend(-epsilon*10, epsilon) == 'negative'
 
 
 def test_slope_trend_sez_sbl_when_input_near_zero():
 	epsilon = 0.000000001
-	assert slope_trend(epsilon/10, epsilon) == 'sbl'
-	assert slope_trend(0, epsilon) == 'sbl'
-	assert slope_trend(-epsilon/10, epsilon) == 'sbl'
+	assert slope_trend(epsilon/10, epsilon) == 'stable'
+	assert slope_trend(0, epsilon) == 'stable'
+	assert slope_trend(-epsilon/10, epsilon) == 'stable'
 
 
 def test_slope_trend_sez_ukn_when_input_is_inf():
 	epsilon = 0.000000001
-	assert slope_trend(float('inf'), epsilon) == 'ukn'
+	assert slope_trend(float('inf'), epsilon) == 'unknown'
