@@ -82,10 +82,13 @@ def combine_raw_data(first, second):
 
 
 def collect_raw_data_and_interstitial_slopes(input):
+	def create_adjacent_pairs(measurments):
+		sorted_measurments = sorted(measurments, key=lambda m: m['datetime'])
+		return list(zip(sorted_measurments, (*sorted_measurments[1:],*[None])))[:-1]
+
 	out = defaultdict(measure_struct)
 	for measure, measurments in json.loads(input).items():
-		measures = sorted(measurments, key=lambda m: m['datetime'])
-		measure_pairs = list(zip(measures, (*measures[1:],*[None])))[:-1]
+		measure_pairs = create_adjacent_pairs(measurments)
 		for pair in measure_pairs:
 			out[measure]['raw'].append(make_raw_data(pair))
 			out[measure]['interstitial'].append(slope_of(out[measure]['raw'][-1]))
@@ -93,18 +96,21 @@ def collect_raw_data_and_interstitial_slopes(input):
 
 
 def calculate_trend_data(out):
+	def add_slope(trend_block, name, left, right):
+		slope = slope_of(combine_raw_data(left, right))
+		trend_block['{}_val'.format(name)] = slope
+		trend_block[name] = slope_word(slope)
+
 	for measure, data in out.items():
 		if len(data['raw']) > 1:
 			first = data['raw'][0]
 			last = data['raw'][-1]
 			middle_data = data['raw'][int(len(data['raw'])/2)]
 			penultimate = data['raw'][-2]
-			data['trend']['long_val'] = slope_of(combine_raw_data(first, last))
-			data['trend']['long'] = slope_word(data['trend']['long_val'])
-			data['trend']['middle_val'] = slope_of(combine_raw_data(middle_data, last))
-			data['trend']['middle'] = slope_word(data['trend']['middle_val'])
-			data['trend']['short_val'] = slope_of(combine_raw_data(penultimate, last))
-			data['trend']['short'] = slope_word(data['trend']['short_val'])
+			add_slope(data['trend'], 'long', first, last)
+			add_slope(data['trend'], 'middle', middle_data, last)
+			add_slope(data['trend'], 'short', penultimate, last)
+
 
 def do_trend_analysis(input):
 	out = collect_raw_data_and_interstitial_slopes(input)
