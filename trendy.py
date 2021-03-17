@@ -34,7 +34,7 @@ ex = {
 	}
 }
 
-RawSlopeData = namedtuple('RawSlopeData', ['y1','y2','x1','x2'])
+RawSlopeData = namedtuple('RawSlopeData', ['y1','y2','x1','x2', 'left', 'right'])
 
 
 def measure_struct():
@@ -54,7 +54,9 @@ def make_raw_data(pair):
 	y2 = pair[1]['mean']
 	x1 = duparser.parse(pair[0]['datetime']).timestamp() / 86400
 	x2 = duparser.parse(pair[1]['datetime']).timestamp() / 86400
-	return RawSlopeData(y1,y2,x1,x2)
+	left = pair[0]
+	right = pair[1]
+	return RawSlopeData(y1,y2,x1,x2,left,right)
 
 
 def slope_of(raw_data):
@@ -64,9 +66,7 @@ def slope_of(raw_data):
 		return float('inf')
 
 
-epsilon = 0.000000001  # todo how the hell do you know if that is a good value?
-
-def slope_trend(slope):
+def slope_trend(slope, epsilon=0.000000001):
 	if slope == float('inf'):
 		return 'ukn'
 	if slope > epsilon:
@@ -77,8 +77,13 @@ def slope_trend(slope):
 		return 'sbl'
 
 
+def epsilon_for(raw_data):
+	# start with 1/10 stdev on the left
+	return raw_data.left['stdev']/10
+
+
 def combine_raw_data(first, second):
-	return RawSlopeData(first.y1,second.y1,first.x1,second.x1)
+	return RawSlopeData(first.y1,second.y1,first.x1,second.x1,first.left,second.left)
 
 
 def collect_raw_data_and_interstitial_slopes(input):
@@ -98,9 +103,10 @@ def collect_raw_data_and_interstitial_slopes(input):
 
 def add_calculated_trend_data(report):
 	def add_slope(trend_block, name, left, right):
-		slope = slope_of(combine_raw_data(left, right))
+		raw_data = combine_raw_data(left, right)
+		slope = slope_of(raw_data)
 		trend_block['{}_val'.format(name)] = slope
-		trend_block[name] = slope_trend(slope)
+		trend_block[name] = slope_trend(slope, epsilon_for(raw_data))
 
 	for measure, data in report.items():
 		if len(data['raw']) > 1:
@@ -166,19 +172,23 @@ def test_do_trend_analysis_reports_pos_neg_or_sbl():
 			"method_lines": [
 				{
 					"datetime": "2017-12-21T13:42:29-05:00",
-					"mean": 0
+					"mean": 0,
+					"stdev": 1,
 				},
 				{
 					"datetime": "2017-12-22T13:42:29-05:00",
-					"mean": 1
+					"mean": 1,
+					"stdev": 1,
 				},
 				{
 					"datetime": "2017-12-23T13:42:29-05:00",
-					"mean": 2.9999999999999
+					"mean": 2.9999999999999,
+					"stdev": 1,
 				},
 				{
 					"datetime": "2017-12-24T13:42:29-05:00",
-					"mean": 3
+					"mean": 3,
+					"stdev": 1,
 				}
 			]
 		}
@@ -283,9 +293,9 @@ def test_slop_of_returns_the_slope_minus_one_if_the_mean_decreases_by_one_per_da
 
 
 def test_combine_raw_data_merges_two_raw_datas():
-	first = RawSlopeData(1,2,3,4)
-	second = RawSlopeData(5,6,7,8)
-	expected = RawSlopeData(first.y1,second.y1,first.x1,second.x1)
+	first = RawSlopeData(1,2,3,4,None,None)
+	second = RawSlopeData(5,6,7,8,None,None)
+	expected = RawSlopeData(first.y1,second.y1,first.x1,second.x1,None,None)
 
 	combined = combine_raw_data(first,second)
 
@@ -294,32 +304,36 @@ def test_combine_raw_data_merges_two_raw_datas():
 
 def test_combine_raw_data_requires_first_arg():
 	first = None
-	second = RawSlopeData(5,6,7,8)
+	second = RawSlopeData(5,6,7,8,None,None)
 
 	with pytest.raises(AttributeError):
 		combine_raw_data(first,second)
 
 
 def test_combine_raw_data_requires_second_arg():
-	first = RawSlopeData(1,2,3,4)
+	first = RawSlopeData(1,2,3,4,None,None)
 	second = None
 
 	with pytest.raises(AttributeError):
 		combine_raw_data(first,second)
 
 def test_slope_trend_sez_pos_when_input_gt_zero():
-	assert slope_trend(epsilon*10) == 'pos'
+	epsilon = 0.000000001
+	assert slope_trend(epsilon*10, epsilon) == 'pos'
 
 
 def test_slope_trend_sez_neg_when_input_lt_zero():
-	assert slope_trend(-epsilon*10) == 'neg'
+	epsilon = 0.000000001
+	assert slope_trend(-epsilon*10, epsilon) == 'neg'
 
 
 def test_slope_trend_sez_sbl_when_input_near_zero():
-	assert slope_trend(epsilon/10) == 'sbl'
-	assert slope_trend(0) == 'sbl'
-	assert slope_trend(-epsilon/10) == 'sbl'
+	epsilon = 0.000000001
+	assert slope_trend(epsilon/10, epsilon) == 'sbl'
+	assert slope_trend(0, epsilon) == 'sbl'
+	assert slope_trend(-epsilon/10, epsilon) == 'sbl'
 
 
 def test_slope_trend_sez_ukn_when_input_is_inf():
-	assert slope_trend(float('inf')) == 'ukn'
+	epsilon = 0.000000001
+	assert slope_trend(float('inf'), epsilon) == 'ukn'
