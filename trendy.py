@@ -64,28 +64,15 @@ def slope_of(raw_data):
 		return float('inf')
 
 
+epsilon = 0.000000001  # todo how the hell do you know if that is a good value?
+
 def slope_word(slope):
-	epsilon = 0.000000001  # todo how the hell do you know if that is a good value?
 	if slope > epsilon:
 		return 'pos'
 	if slope < (0-epsilon):
 		return 'neg'
 	if (0-epsilon) < slope < (0+epsilon):
 		return 'sbl'
-
-
-def test_slope_word_sez_pos_when_input_gt_zero():
-	assert slope_word(1) == 'pos'
-
-
-def test_slope_word_sez_neg_when_input_lt_zero():
-	assert slope_word(-1) == 'neg'
-
-
-def test_slope_word_sez_sbl_when_input_near_zero():
-	assert slope_word(0.000000000001) == 'sbl'
-	assert slope_word(0) == 'sbl'
-	assert slope_word(-0.000000000001) == 'sbl'
 
 
 def combine_raw_data(first, second):
@@ -301,3 +288,16 @@ def test_combine_raw_data_requires_second_arg():
 
 	with pytest.raises(AttributeError):
 		combine_raw_data(first,second)
+
+def test_slope_word_sez_pos_when_input_gt_zero():
+	assert slope_word(epsilon*10) == 'pos'
+
+
+def test_slope_word_sez_neg_when_input_lt_zero():
+	assert slope_word(-epsilon*10) == 'neg'
+
+
+def test_slope_word_sez_sbl_when_input_near_zero():
+	assert slope_word(epsilon/10) == 'sbl'
+	assert slope_word(0) == 'sbl'
+	assert slope_word(-epsilon/10) == 'sbl'
