@@ -78,8 +78,8 @@ def slope_trend(slope, epsilon=0.000000001):
 
 
 def epsilon_for(raw_data):
-	# start with 1/10 stdev on the left
-	return raw_data.left['stdev']/10
+	# start with 1/100 stdev on the left
+	return raw_data.left['stdev']/100
 
 
 def combine_raw_data(first, second):
