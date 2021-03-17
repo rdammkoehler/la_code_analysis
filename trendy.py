@@ -86,13 +86,13 @@ def collect_raw_data_and_interstitial_slopes(input):
 		sorted_measurments = sorted(measurments, key=lambda m: m['datetime'])
 		return list(zip(sorted_measurments, (*sorted_measurments[1:],*[None])))[:-1]
 
-	out = defaultdict(measure_struct)
+	report = defaultdict(measure_struct)
 	for measure, measurments in json.loads(input).items():
 		measure_pairs = create_adjacent_pairs(measurments)
 		for pair in measure_pairs:
-			out[measure]['raw'].append(make_raw_data(pair))
-			out[measure]['interstitial'].append(slope_of(out[measure]['raw'][-1]))
-	return out
+			report[measure]['raw'].append(make_raw_data(pair))
+			report[measure]['interstitial'].append(slope_of(report[measure]['raw'][-1]))
+	return report
 
 
 def add_calculated_trend_data(report):
