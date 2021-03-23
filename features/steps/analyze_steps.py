@@ -28,7 +28,7 @@ def step_impl(context):
 
 @then(u'the analysis reports a satisfactory trend')
 def step_impl(context):
-  assert context.result == 'ok'
+  assert context.result == 'satisfactory'
 
 
 @given(u'the data is consistent')
