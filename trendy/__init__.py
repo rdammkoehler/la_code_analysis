@@ -1,1 +1,1 @@
-from .trendy import analyze
+from .analyze import analyze
