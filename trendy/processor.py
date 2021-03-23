@@ -53,9 +53,10 @@ def date_to_linear_offset(dates):
 
 
 def process(args):
-    data = LACodeAnalysisStatisticsReader().load(args.inputfile)
+    verbose = False if args.quite is None else False if args.quite else True
+    data = LACodeAnalysisStatisticsReader().load(args.inputfile, args.measure)
     # pap_print(data)
     data = (date_to_linear_offset(data[0]), data[1])
-    result = analyze(data)
+    result = analyze(data, verbose)
     print(result)
 
