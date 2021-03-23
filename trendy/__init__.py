@@ -1,0 +1,1 @@
+from .trendy import analyze
