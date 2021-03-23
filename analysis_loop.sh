@@ -17,6 +17,7 @@ CODE_ANALYSIS_LOCATION=/Users/rpd/projects/la/code-analysis
 PRODUCT_CODE_ROOT=/Users/rpd/projects/la/ford/ford-digital/enrollment
 
 # NOTE: the following line assumes we are at the root of the folder structure
+# TODO this now picks up the .git, venv, and .pytest_cache folder; we should exclude those
 ALL_TOP_LEVEL_FOLDERS=$(find ${PRODUCT_CODE_ROOT}/. -type d -depth 2)
 
 # setup/configure code analysis tool(s)
@@ -33,9 +34,15 @@ popd > /dev/null || exit 1
 # main run loop; repeatedly execute the analysis command!
 pushd "${DIR}" > /dev/null  || exit 1
 for code_dir in ${ALL_TOP_LEVEL_FOLDERS}; do
-    echo "starting: ./run_analysis.sh \"${CODE_ANALYSIS_LOCATION}\" \"${PRODUCT_CODE_ROOT}\" \"${code_dir}\" &"
-    ./run_analysis.sh "${CODE_ANALYSIS_LOCATION}" "${PRODUCT_CODE_ROOT}" "${code_dir}" >> analysis.log 2>&1  &
-    sleep 2
+    if [[ ! ${code_dir} =~  .*(\.git|venv|\.pytest_cache).*$ ]]; then
+      echo "starting: ./run_analysis.sh \"${CODE_ANALYSIS_LOCATION}\" \"${PRODUCT_CODE_ROOT}\" \"${code_dir}\" &"
+      ./run_analysis.sh "${CODE_ANALYSIS_LOCATION}" "${PRODUCT_CODE_ROOT}" "${code_dir}" >> analysis.log 2>&1  &
+      if [[ -z "${SLEEP_NOT}" ]]; then
+        sleep 2
+      fi
+    else
+      echo "Ignoring ${code_dir}"
+    fi
 done
 
 popd > /dev/null  || exit 1

@@ -48,7 +48,7 @@ popd > /dev/null || exit 10
 # create the analysis command
 # TODO parameterize the following
 steps=52
-ANALYSIS_CMD="python -m metrics.gather --language java -m method_lines balance complexity fan_out -t ${steps}"
+ANALYSIS_CMD="python -m metrics.gather --generate-graphs --language java -m method_lines balance complexity fan_out -t ${steps}"
 
 echo "***** processing: ${code_dir}"
 
@@ -81,7 +81,8 @@ popd  > /dev/null  || exit 10
 
 # move the results to the folder 
 mkdir -p "${code_dir}/../analysis_results"
-mv "${CODE_ANALYSIS_LOCATION}/full_results/${repo_name}*" "${code_dir}/../analysis_results/."
+# don't quote my globs
+mv ${CODE_ANALYSIS_LOCATION}/full_results/${repo_name}* "${code_dir}/../analysis_results"
 
 
 popd > /dev/null || exit 10
