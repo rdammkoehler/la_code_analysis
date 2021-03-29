@@ -14,7 +14,10 @@ def test_given_too_little_data_return_undetermined():
 
 
 def test_given_data_trending_up_return_problematic():
-    assert analyze([(0, 0), (1, 1), (2, 2), (3, 3), (4, 4)]) == 'problematic'
+    # so for some reason this was creating numpy.linalg.LinAlgError: Singular matrix
+    # by taking 0,0 out we fixed it
+    # now the issue is finding 'up' in the analysis results, so the prod code
+    assert analyze([(1, 2), (2, 4), (3, 8), (4, 16), (5, 32)]) == 'problematic'
 
 
 # todo more here about problematic data
