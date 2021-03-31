@@ -14,25 +14,25 @@ DIR="$( cd -P "$( dirname "$SOURCE" )" && pwd )"
 export DIR
 pushd "${DIR}" > /dev/null || exit 1
 
-if [[ ! "${#}" -ge 3 ]]; then
-    echo "Not enough arguments supplied (${#})"
-    echo "usage: run_analysis.sh ${CODE_ANALYSIS_LOCATION} ${PRODUCT_CODE_ROOT} ${ANALYSIS_TARGET}"
+if [[ "${#}" -ne 3 ]]; then
+    echo "Bad argument count (${#})"
+    echo "usage: run_analysis.sh \${CODE_ANALYSIS_LOCATION} \${PRODUCT_CODE_ROOT} \${ANALYSIS_TARGET}"
     echo "You ran: ${*}"
     exit 1
 fi
 
-if [[ -z "${1}" ]]; then
-    echo "Code Analysis Location is a required parameter"
+if [[ ! -d "${1}" ]]; then
+    echo "Code Analysis Location folder does not exist"
     exit 2
 fi
 
-if [[ -z "${2}" ]]; then
-    echo "Product Code Root folder is a required parameter"
+if [[ ! -d "${2}" ]]; then
+    echo "Product Code Root folder does not exist"
     exit 3
 fi
 
-if [[ -z "${3}" ]]; then
-    echo "Analysis Target folder is a required parameter"
+if [[ ! -d "${3}" ]]; then
+    echo "Analysis Target folder does not exist"
     exit 4
 fi
 

@@ -12,9 +12,26 @@ DIR="$( cd -P "$( dirname "$SOURCE" )" && pwd )"
 export DIR
 pushd "${DIR}" > /dev/null || exit 1
 
-# TODO parameterize some of this stuff
-CODE_ANALYSIS_LOCATION=/Users/rpd/projects/la/code-analysis
-PRODUCT_CODE_ROOT=/Users/rpd/projects/la/ford/ford-digital/enrollment
+
+if [[ "${#}" -ne 2 ]]; then
+    echo "Bad argument count (${#})"
+    echo "usage: run_analysis.sh \${CODE_ANALYSIS_LOCATION} \${PRODUCT_CODE_ROOT}"
+    echo "You ran: ${*}"
+    exit 1
+fi
+
+if [[ ! -d "${1}" ]]; then
+    echo "Code Analysis Location folder does not exist"
+    exit 2
+fi
+
+if [[ ! -d "${2}" ]]; then
+    echo "Product Code Root folder does not exist"
+    exit 3
+fi
+
+CODE_ANALYSIS_LOCATION=${1}
+PRODUCT_CODE_ROOT=${2}
 
 # NOTE: the following line assumes we are at the root of the folder structure
 # TODO this now picks up the .git, venv, and .pytest_cache folder; we should exclude those
