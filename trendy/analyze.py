@@ -2,7 +2,7 @@ import json
 import math
 
 
-# pull me out to a strategy
+# pull me out to a strategy so we can use different regression techniques easily
 def _linear_regression_analysis(data):
     # see https://realpython.com/linear-regression-in-python/
     import numpy as np
@@ -31,26 +31,7 @@ def _linear_regression_analysis(data):
     }
 
 
-# def _polynomial_regression_analysis(data):
-#     x = np.array(data[0])
-#     y = np.array(data[1])
-#     z = np.polyfit(x, y, 3)
-#     p = np.poly1d(z)
-#     xp = np.linspace(x.min(), x.max(), 100)
-#
-#     import matplotlib.pyplot as plt
-#     plt.plot(x, y, '.', xp, p(xp), '-')
-#     plt.show()
-
-
 def _pretty_print_linear_regression_data(data):
-    # class NDArrayEncoder(json.JSONEncoder):
-    #     def default(self, obj):
-    #         if isinstance(obj, np.ndarray):
-    #             return obj.tolist()
-    #         return json.JSONEncoder.default(self, obj)
-    #
-    # print(json.dumps(data, indent=2, sort_keys=True, cls=NDArrayEncoder))
     print(json.dumps(data, indent=2, sort_keys=True))
 
 
